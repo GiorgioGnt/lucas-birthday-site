@@ -1,11 +1,15 @@
+import EventDetails from './components/EventDetails'
+import HeroSection from './components/HeroSection'
+import RSVPSection from './components/RSVPSection'
+
 function App() {
   return (
-    <main style={{ fontFamily: "Arial", padding: "40px", textAlign: "center" }}>
-      <h1>🎉 Lucas is turning 5! 🎉</h1>
-      <p>You are invited to my birthday party!</p>
-      <p>More details coming soon...</p>
+    <main className="min-h-screen overflow-hidden bg-[#0b1020] text-white">
+      <HeroSection />
+      <EventDetails />
+      <RSVPSection />
     </main>
-  );
+  )
 }
 
-export default App;
+export default App
