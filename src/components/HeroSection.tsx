@@ -72,6 +72,37 @@ function PixelHeroCharacter() {
   )
 }
 
+function getDaysUntilJune13() {
+  const today = new Date()
+  const startOfToday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  )
+  let eventDate = new Date(today.getFullYear(), 5, 13)
+
+  if (eventDate < startOfToday) {
+    eventDate = new Date(today.getFullYear() + 1, 5, 13)
+  }
+
+  const millisecondsPerDay = 24 * 60 * 60 * 1000
+  return Math.ceil((eventDate.getTime() - startOfToday.getTime()) / millisecondsPerDay)
+}
+
+function CountdownBanner() {
+  const daysUntilParty = getDaysUntilJune13()
+
+  return (
+    <motion.p
+      animate={{ opacity: [1, 0.22, 1] }}
+      className="pointer-events-none absolute inset-x-[18%] bottom-[36%] z-20 text-center font-display text-[clamp(.64rem,3vw,1.2rem)] font-black uppercase tracking-[.14em] text-white drop-shadow-[3px_3px_0_#050816]"
+      transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
+    >
+      Press start in {daysUntilParty} days
+    </motion.p>
+  )
+}
+
 function PixelEnemy({ defeated }: { defeated: boolean }) {
   return (
     <motion.div
@@ -183,6 +214,7 @@ function ArcadeIntroAnimation({
 
   return (
     <div className="relative mx-auto mt-5 h-[clamp(6rem,27vw,11rem)] w-full max-w-3xl overflow-hidden">
+      {blockHit && <CountdownBanner />}
       {/* The block sits around the same horizontal position as the hidden 5. */}
       <AnimatedQuestionBlock hit={blockHit} />
       <PixelEnemy defeated={monsterDefeated} />
