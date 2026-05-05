@@ -271,7 +271,7 @@ function HeroSection() {
             You're Invited!
           </p>
           <h1 className="mt-4 font-display text-7xl font-black leading-none text-red-500 drop-shadow-[7px_7px_0_#111827] sm:text-8xl lg:text-[9.5rem]">
-            Lucas!
+            Lucas
           </h1>
           <p className="mt-4 font-display text-4xl font-black leading-none text-lime-400 drop-shadow-[5px_5px_0_#166534] sm:text-6xl">
             is turning{' '}
