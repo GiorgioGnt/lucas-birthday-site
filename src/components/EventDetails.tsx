@@ -20,6 +20,13 @@ function EventDetails() {
   return (
     <section className="relative isolate bg-[#ef1747] px-4 py-12 text-[#10172a] sm:px-8 sm:py-16">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle,#facc15_2px,transparent_3px),radial-gradient(circle,#38bdf8_2px,transparent_3px)] bg-[size:54px_54px,78px_78px] bg-[position:0_0,24px_18px] opacity-70" />
+      <div className="absolute bottom-8 left-4 hidden h-24 w-16 border-x-4 border-[#064e3b] bg-emerald-500 shadow-[inset_8px_0_0_#86efac,inset_-8px_0_0_#047857,5px_5px_0_#7f1d1d] md:block" />
+      <div className="absolute bottom-32 left-2 hidden h-9 w-20 border-4 border-[#064e3b] bg-emerald-400 shadow-[inset_0_-6px_0_#059669,5px_5px_0_#7f1d1d] md:block" />
+      <div className="absolute bottom-10 right-6 hidden grid-cols-3 gap-2 md:grid">
+        <span className="h-10 w-10 border-4 border-[#7c2d12] bg-amber-400 shadow-[inset_0_-6px_0_#f97316]" />
+        <span className="h-10 w-10 border-4 border-[#7c2d12] bg-amber-400 shadow-[inset_0_-6px_0_#f97316]" />
+        <span className="h-10 w-10 border-4 border-[#7c2d12] bg-amber-400 shadow-[inset_0_-6px_0_#f97316]" />
+      </div>
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 text-center">
           <p className="font-display text-sm font-black uppercase tracking-[.3em] text-amber-200">
@@ -30,14 +37,13 @@ function EventDetails() {
           </h2>
         </div>
 
-        <div className="border-4 border-sky-400 bg-white p-4 text-center shadow-[0_0_0_4px_#ef4444,0_0_0_8px_#ffffff,0_12px_0_#0b1020] sm:p-8">
-          <p className="font-display text-3xl font-black uppercase sm:text-4xl">
-            Level up with Lucas
-          </p>
-
-          <div className="my-6 grid gap-4 md:grid-cols-3">
+        <div className="border-4 border-sky-400 bg-white p-4 text-center shadow-[0_0_0_4px_#ef4444,0_0_0_8px_#ffffff,0_12px_0_#0b1020] transition duration-300 hover:-translate-y-1 hover:shadow-[0_0_0_4px_#ef4444,0_0_0_8px_#ffffff,0_18px_0_#0b1020] sm:p-8">
+          <div className="mb-6 grid gap-4 md:grid-cols-3">
             {details.map((detail) => (
-              <article className="border-4 border-[#0b1020] p-4" key={detail.label}>
+              <article
+                className="border-4 border-[#0b1020] p-4 transition duration-300 hover:-translate-y-1 hover:bg-amber-100"
+                key={detail.label}
+              >
                 <p className="font-display text-xs font-black uppercase tracking-widest text-sky-600">
                   {detail.label}
                 </p>

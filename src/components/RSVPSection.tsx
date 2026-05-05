@@ -2,7 +2,7 @@ function RSVPSection() {
   return (
     <section className="relative isolate bg-[#0b1020] px-4 py-12 sm:px-8 sm:py-16">
       <div className="absolute inset-x-0 top-0 -z-10 h-16 bg-[linear-gradient(45deg,#38bdf8_25%,#0ea5e9_25%,#0ea5e9_50%,#38bdf8_50%,#38bdf8_75%,#0ea5e9_75%)] bg-[size:30px_30px]" />
-      <div className="mx-auto grid max-w-5xl gap-8 border-4 border-cyan-300 bg-[#16213d] p-6 shadow-[0_12px_0_#050816] md:grid-cols-[.9fr_1.1fr] md:p-8">
+      <div className="mx-auto grid max-w-5xl gap-8 border-4 border-cyan-300 bg-[#16213d] p-6 shadow-[0_12px_0_#050816] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_0_#050816] md:grid-cols-[.9fr_1.1fr] md:p-8">
         <div>
           <p className="font-display text-sm font-black uppercase tracking-[.3em] text-amber-300">
             Bonus round
@@ -22,7 +22,7 @@ function RSVPSection() {
               Guest name
             </span>
             <input
-              className="border-4 border-[#050816] bg-white px-4 py-3 text-lg font-bold text-[#10172a] outline-none ring-amber-300 transition focus:ring-4"
+              className="border-4 border-[#050816] bg-white px-4 py-3 text-lg font-bold text-[#10172a] outline-none ring-amber-300 transition duration-200 focus:-translate-y-1 focus:ring-4"
               placeholder="Your name"
               type="text"
             />
@@ -32,7 +32,7 @@ function RSVPSection() {
             <span className="font-display text-sm font-black uppercase tracking-widest text-cyan-200">
               Number of players
             </span>
-            <select className="border-4 border-[#050816] bg-white px-4 py-3 text-lg font-bold text-[#10172a] outline-none ring-amber-300 transition focus:ring-4">
+            <select className="border-4 border-[#050816] bg-white px-4 py-3 text-lg font-bold text-[#10172a] outline-none ring-amber-300 transition duration-200 focus:-translate-y-1 focus:ring-4">
               <option>1 guest</option>
               <option>2 guests</option>
               <option>3 guests</option>

@@ -19,12 +19,46 @@ function PixelCloud({ className = '' }: { className?: string }) {
   )
 }
 
+function PixelBlock({ className = '' }: { className?: string }) {
+  return (
+    <span
+      className={`absolute h-12 w-12 border-4 border-[#7c2d12] bg-amber-400 shadow-[inset_0_-8px_0_#f97316,6px_6px_0_#050816] ${className}`}
+      aria-hidden="true"
+    >
+      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-display text-2xl font-black text-yellow-900">
+        ?
+      </span>
+    </span>
+  )
+}
+
 function PixelCoin({ className = '' }: { className?: string }) {
   return (
     <span
       className={`absolute h-9 w-9 rounded-full border-4 border-amber-500 bg-yellow-300 shadow-[inset_0_-5px_0_#f59e0b,0_4px_0_#7c2d12] ${className}`}
       aria-hidden="true"
     />
+  )
+}
+
+function PixelPipe({ className = '' }: { className?: string }) {
+  return (
+    <div className={`absolute w-20 ${className}`} aria-hidden="true">
+      <div className="h-9 border-4 border-[#064e3b] bg-emerald-400 shadow-[inset_0_-6px_0_#059669,5px_5px_0_#050816]" />
+      <div className="mx-auto h-24 w-14 border-x-4 border-[#064e3b] bg-emerald-500 shadow-[inset_8px_0_0_#86efac,inset_-8px_0_0_#047857,5px_0_0_#050816]" />
+    </div>
+  )
+}
+
+function PixelPowerUp({ className = '' }: { className?: string }) {
+  return (
+    <div className={`absolute h-14 w-16 ${className}`} aria-hidden="true">
+      <div className="absolute left-1 top-0 h-9 w-14 rounded-t-full border-4 border-[#7f1d1d] bg-red-500 shadow-[inset_0_-6px_0_#dc2626,4px_4px_0_#050816]">
+        <span className="absolute left-2 top-2 h-3 w-3 rounded-full bg-white" />
+        <span className="absolute right-2 top-2 h-3 w-3 rounded-full bg-white" />
+      </div>
+      <div className="absolute bottom-0 left-4 h-7 w-8 border-4 border-[#7c2d12] bg-amber-100 shadow-[inset_0_-4px_0_#fbbf24]" />
+    </div>
   )
 }
 
@@ -51,10 +85,14 @@ function HeroSection() {
             aria-hidden="true"
           />
         ))}
-        <PixelCloud className="left-5 top-28 scale-75 sm:left-12 sm:top-36 sm:scale-100" />
-        <PixelCloud className="right-4 top-20 scale-75 sm:right-16 sm:top-28 sm:scale-100" />
-        <PixelCoin className="left-9 top-1/2 hidden sm:block" />
-        <PixelCoin className="right-10 top-[58%] hidden sm:block" />
+        <PixelCloud className="pixel-float-slow left-5 top-28 scale-75 sm:left-12 sm:top-36 sm:scale-100" />
+        <PixelCloud className="pixel-float right-4 top-20 scale-75 sm:right-16 sm:top-28 sm:scale-100" />
+        <PixelBlock className="left-[12%] top-[42%] hidden sm:block" />
+        <PixelBlock className="right-[14%] top-[46%] hidden sm:block" />
+        <PixelCoin className="pixel-bob left-9 top-1/2 hidden sm:block" />
+        <PixelCoin className="pixel-bob right-10 top-[58%] hidden sm:block" />
+        <PixelPowerUp className="bottom-16 left-[12%] hidden sm:block" />
+        <PixelPipe className="bottom-0 right-[8%] hidden sm:block" />
         <PixelStar className="left-[18%] bottom-36 scale-75" />
         <PixelStar className="right-[18%] bottom-44 scale-75" />
 
