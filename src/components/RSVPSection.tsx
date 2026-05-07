@@ -37,8 +37,8 @@ const guestCountOptions: Exclude<GuestCountOption, ''>[] = [
   '6+',
 ]
 
-// TODO: Later, when deployed to Azure Static Web Apps, change this to "/api/rsvp".
-const rsvpApiUrl = 'http://localhost:7071/api/rsvp'
+// localhost is only for local development; /api/rsvp uses Azure Static Web Apps integrated API routing in production.
+const rsvpApiUrl = '/api/rsvp'
 
 async function submitRsvp(_form: RSVPForm, isUpdate: boolean) {
   const cleanedPayload: CleanedRSVPPayload = {
