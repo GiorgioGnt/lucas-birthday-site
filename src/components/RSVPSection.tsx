@@ -16,10 +16,10 @@ type RSVPForm = {
 type CleanedRSVPPayload = {
   attending: Exclude<AttendanceOption, ''>
   className: Exclude<ClassOption, ''>
-  guestCount: Exclude<GuestCountOption, ''> | null
+  guestCount?: Exclude<GuestCountOption, ''>
   isUpdate: boolean
   kidName: string
-  parentGuardianName: string
+  parentName?: string
 }
 
 const classOptions: Exclude<ClassOption, ''>[] = [
@@ -37,22 +37,37 @@ const guestCountOptions: Exclude<GuestCountOption, ''>[] = [
   '6+',
 ]
 
+// TODO: Later, when deployed to Azure Static Web Apps, change this to "/api/rsvp".
+const rsvpApiUrl = 'http://localhost:7071/api/rsvp'
+
 async function submitRsvp(_form: RSVPForm, isUpdate: boolean) {
   const cleanedPayload: CleanedRSVPPayload = {
     attending: _form.attending as Exclude<AttendanceOption, ''>,
     className: _form.className as Exclude<ClassOption, ''>,
-    guestCount:
-      _form.attending === 'Yes'
-        ? (_form.guestCount as Exclude<GuestCountOption, ''>)
-        : null,
     isUpdate,
     kidName: _form.kidName.trim(),
-    parentGuardianName: _form.parentGuardianName.trim(),
+  }
+  const parentName = _form.parentGuardianName.trim()
+
+  if (_form.attending === 'Yes') {
+    cleanedPayload.guestCount = _form.guestCount as Exclude<GuestCountOption, ''>
   }
 
-  // TODO: Send cleanedPayload to the future Azure Function API endpoint.
-  console.log('RSVP payload', cleanedPayload)
-  await new Promise((resolve) => window.setTimeout(resolve, 650))
+  if (parentName) {
+    cleanedPayload.parentName = parentName
+  }
+
+  const response = await fetch(rsvpApiUrl, {
+    body: JSON.stringify(cleanedPayload),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+  })
+
+  if (!response.ok) {
+    throw new Error('We could not save your RSVP. Please check the form and try again.')
+  }
 }
 
 function RSVPSection() {
@@ -66,6 +81,7 @@ function RSVPSection() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [confirmationIsOpen, setConfirmationIsOpen] = useState(false)
   const [showValidation, setShowValidation] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const [submitResult, setSubmitResult] = useState<AttendanceOption>('')
   const firstRsvpButtonRef = useRef<HTMLButtonElement>(null)
 
@@ -106,6 +122,7 @@ function RSVPSection() {
       [field]: value,
       ...(field === 'attending' && value === 'No' ? { guestCount: '' } : {}),
     }))
+    setSubmitError('')
     setSubmitResult('')
   }
 
@@ -118,6 +135,7 @@ function RSVPSection() {
     }
 
     setConfirmationIsOpen(true)
+    setSubmitError('')
   }
 
   async function handleConfirmedSubmit(isUpdate: boolean) {
@@ -127,9 +145,18 @@ function RSVPSection() {
 
     setConfirmationIsOpen(false)
     setIsSubmitting(true)
+    setSubmitError('')
     try {
       await submitRsvp(form, isUpdate)
       setSubmitResult(form.attending)
+    } catch (error) {
+      setSubmitError(
+        error instanceof TypeError
+          ? 'Unable to save RSVP. Please try again.'
+          : error instanceof Error
+            ? error.message
+            : 'Unable to save RSVP. Please try again.',
+      )
     } finally {
       setIsSubmitting(false)
     }
@@ -271,6 +298,15 @@ function RSVPSection() {
               {isSubmitting ? 'Submitting...' : submitButtonLabel}
             </button>
           </div>
+
+          {submitError && (
+            <div
+              className="mx-auto w-full max-w-2xl border-4 border-[#050816] bg-rose-500 p-4 text-center font-display text-base font-black uppercase tracking-wide text-white shadow-[0_8px_0_#9f1239]"
+              role="alert"
+            >
+              {submitError}
+            </div>
+          )}
 
           {submitResult && (
             <div
