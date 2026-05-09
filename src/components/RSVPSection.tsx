@@ -1,13 +1,11 @@
 import type { FormEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
-type ClassOption = '' | 'Ms Noel' | 'Ms Johnson' | 'Not Applicable'
 type AttendanceOption = '' | 'Yes' | 'No'
 type GuestCountOption = '' | '1' | '2' | '3' | '4' | '5' | '6+'
 
 type RSVPForm = {
   attending: AttendanceOption
-  className: ClassOption
   guestCount: GuestCountOption
   kidName: string
   parentGuardianName: string
@@ -15,18 +13,11 @@ type RSVPForm = {
 
 type CleanedRSVPPayload = {
   attending: Exclude<AttendanceOption, ''>
-  className: Exclude<ClassOption, ''>
   guestCount?: Exclude<GuestCountOption, ''>
   isUpdate: boolean
   kidName: string
   parentName?: string
 }
-
-const classOptions: Exclude<ClassOption, ''>[] = [
-  'Ms Noel',
-  'Ms Johnson',
-  'Not Applicable',
-]
 
 const guestCountOptions: Exclude<GuestCountOption, ''>[] = [
   '1',
@@ -43,7 +34,6 @@ const rsvpApiUrl = '/api/rsvp'
 async function submitRsvp(_form: RSVPForm, isUpdate: boolean) {
   const cleanedPayload: CleanedRSVPPayload = {
     attending: _form.attending as Exclude<AttendanceOption, ''>,
-    className: _form.className as Exclude<ClassOption, ''>,
     isUpdate,
     kidName: _form.kidName.trim(),
   }
@@ -73,12 +63,12 @@ async function submitRsvp(_form: RSVPForm, isUpdate: boolean) {
 function RSVPSection() {
   const [form, setForm] = useState<RSVPForm>({
     attending: '',
-    className: '',
     guestCount: '',
     kidName: '',
     parentGuardianName: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isRsvpCompleted, setIsRsvpCompleted] = useState(false)
   const [confirmationIsOpen, setConfirmationIsOpen] = useState(false)
   const [showValidation, setShowValidation] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -86,24 +76,29 @@ function RSVPSection() {
   const firstRsvpButtonRef = useRef<HTMLButtonElement>(null)
 
   const kidNameIsValid = form.kidName.trim().length > 0
-  const classIsValid = classOptions.includes(form.className as Exclude<ClassOption, ''>)
   const attendingIsValid = form.attending === 'Yes' || form.attending === 'No'
   const guestCountIsRequired = form.attending === 'Yes'
   const guestCountIsValid =
     !guestCountIsRequired ||
     guestCountOptions.includes(form.guestCount as Exclude<GuestCountOption, ''>)
-  const isFormValid =
-    kidNameIsValid && classIsValid && attendingIsValid && guestCountIsValid
+  const isFormValid = kidNameIsValid && attendingIsValid && guestCountIsValid
   const submitButtonLabel =
-    form.attending === 'Yes'
+    isRsvpCompleted
+      ? 'Player registered'
+      : form.attending === 'Yes'
       ? 'Count on me'
       : form.attending === 'No'
         ? 'Player not available'
         : 'Select RSVP'
   const submitButtonColor =
-    form.attending === 'No'
+    isRsvpCompleted
+      ? 'bg-lime-300 text-[#10172a] shadow-[0_8px_0_#15803d]'
+      : form.attending === 'No'
       ? 'bg-sky-300 text-[#10172a] shadow-[0_8px_0_#0369a1] enabled:hover:shadow-[0_12px_0_#0369a1]'
       : 'bg-amber-300 text-[#10172a] shadow-[0_8px_0_#b45309] enabled:hover:shadow-[0_12px_0_#b45309]'
+  const submitButtonDisabledStyle = isRsvpCompleted
+    ? 'disabled:opacity-100 disabled:shadow-[0_8px_0_#15803d]'
+    : 'disabled:opacity-50 disabled:shadow-none'
 
   useEffect(() => {
     if (!confirmationIsOpen) {
@@ -130,7 +125,7 @@ function RSVPSection() {
     event.preventDefault()
     setShowValidation(true)
 
-    if (!isFormValid || isSubmitting) {
+    if (!isFormValid || isSubmitting || isRsvpCompleted) {
       return
     }
 
@@ -139,7 +134,7 @@ function RSVPSection() {
   }
 
   async function handleConfirmedSubmit(isUpdate: boolean) {
-    if (!isFormValid || isSubmitting) {
+    if (!isFormValid || isSubmitting || isRsvpCompleted) {
       return
     }
 
@@ -148,6 +143,7 @@ function RSVPSection() {
     setSubmitError('')
     try {
       await submitRsvp(form, isUpdate)
+      setIsRsvpCompleted(true)
       setSubmitResult(form.attending)
     } catch (error) {
       setSubmitError(
@@ -213,32 +209,6 @@ function RSVPSection() {
 
             <label className="grid gap-2">
               <span className="font-display text-sm font-black uppercase tracking-widest text-cyan-200">
-                Class
-              </span>
-              <select
-                className="border-4 border-[#050816] bg-white px-4 py-3 text-lg font-bold text-[#10172a] outline-none ring-amber-300 transition duration-200 focus:-translate-y-1 focus:ring-4"
-                onBlur={() => setShowValidation(true)}
-                onChange={(event) =>
-                  updateForm('className', event.target.value as ClassOption)
-                }
-                value={form.className}
-              >
-                <option value="">Select class</option>
-                {classOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              {showValidation && !classIsValid && (
-                <p className="text-sm font-bold text-amber-200">
-                  Please select a class.
-                </p>
-              )}
-            </label>
-
-            <label className="grid gap-2">
-              <span className="font-display text-sm font-black uppercase tracking-widest text-cyan-200">
                 Will you attend?
               </span>
               <select
@@ -291,8 +261,8 @@ function RSVPSection() {
 
           <div className="flex justify-center">
             <button
-              className={`w-full max-w-sm border-4 border-[#050816] px-6 py-4 font-display text-xl font-black uppercase tracking-wider transition duration-300 enabled:hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-cyan-300 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none sm:w-auto sm:min-w-80 ${submitButtonColor}`}
-              disabled={!isFormValid || isSubmitting}
+              className={`w-full max-w-sm border-4 border-[#050816] px-6 py-4 font-display text-xl font-black uppercase tracking-wider transition duration-300 enabled:hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-cyan-300 disabled:cursor-not-allowed sm:w-auto sm:min-w-80 ${submitButtonColor} ${submitButtonDisabledStyle}`}
+              disabled={!isFormValid || isSubmitting || isRsvpCompleted}
               type="submit"
             >
               {isSubmitting ? 'Submitting...' : submitButtonLabel}
@@ -337,7 +307,7 @@ function RSVPSection() {
         </form>
       </div>
 
-      {confirmationIsOpen && (
+      {confirmationIsOpen && !isRsvpCompleted && (
         <div
           aria-labelledby="rsvp-confirmation-title"
           aria-modal="true"
@@ -364,14 +334,14 @@ function RSVPSection() {
                 ref={firstRsvpButtonRef}
                 type="button"
               >
-                New RSVP
+                This is my first RSVP
               </button>
               <button
                 className="border-4 border-[#050816] bg-sky-300 px-4 py-4 font-display text-base font-black uppercase tracking-wider text-[#10172a] shadow-[0_6px_0_#0369a1] transition duration-150 hover:-translate-y-1 hover:shadow-[0_10px_0_#0369a1] active:translate-y-1 active:shadow-[0_3px_0_#0369a1] focus:outline-none focus:ring-4 focus:ring-amber-300"
                 onClick={() => void handleConfirmedSubmit(true)}
                 type="button"
               >
-                Update RSVP
+                I am updating my RSVP
               </button>
               <button
                 className="border-4 border-[#050816] bg-rose-500 px-4 py-4 font-display text-base font-black uppercase tracking-wider text-white shadow-[0_6px_0_#9f1239] transition duration-150 hover:-translate-y-1 hover:shadow-[0_10px_0_#9f1239] active:translate-y-1 active:shadow-[0_3px_0_#9f1239] focus:outline-none focus:ring-4 focus:ring-amber-300 sm:col-span-2"

@@ -10,7 +10,6 @@ type Attendance = "Yes" | "No";
 
 type RsvpRequestBody = {
   attending?: unknown;
-  className?: unknown;
   guestCount?: unknown;
   isUpdate?: unknown;
   kidName?: unknown;
@@ -19,7 +18,6 @@ type RsvpRequestBody = {
 
 type ValidatedRsvp = {
   attending: Attendance;
-  className: string;
   guestCount: string;
   isUpdate: boolean;
   kidName: string;
@@ -34,6 +32,7 @@ type RsvpEntity = ValidatedRsvp & {
 };
 
 const partitionKey = "lucas5";
+const easternTimeZone = "America/New_York";
 
 function jsonResponse(status: number, body: unknown): HttpResponseInit {
   return {
@@ -60,12 +59,50 @@ function normalizeRowKeyPart(value: string): string {
   return normalized || "unknown";
 }
 
+function normalizeGmtOffset(timeZoneName: string): string {
+  const offset = timeZoneName.replace("GMT", "");
+
+  if (/^[+-]\d{2}:\d{2}$/.test(offset)) {
+    return offset;
+  }
+
+  if (/^[+-]\d{1,2}$/.test(offset)) {
+    const sign = offset.startsWith("-") ? "-" : "+";
+    const hours = offset.replace(/[+-]/, "").padStart(2, "0");
+
+    return `${sign}${hours}:00`;
+  }
+
+  return "-05:00";
+}
+
+function getEasternTimestamp(date = new Date()): string {
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    day: "2-digit",
+    hour: "2-digit",
+    hourCycle: "h23",
+    hour12: false,
+    minute: "2-digit",
+    month: "2-digit",
+    second: "2-digit",
+    timeZone: easternTimeZone,
+    timeZoneName: "longOffset",
+    year: "numeric",
+  });
+  const parts = Object.fromEntries(
+    formatter.formatToParts(date).map((part) => [part.type, part.value]),
+  );
+  const milliseconds = String(date.getMilliseconds()).padStart(3, "0");
+  const offset = normalizeGmtOffset(parts.timeZoneName ?? "GMT-05:00");
+
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}.${milliseconds}${offset}`;
+}
+
 function createRowKey(rsvp: ValidatedRsvp, submittedAt: string): string {
   const timestamp = submittedAt.replace(/[^0-9]/g, "");
   const kidName = normalizeRowKeyPart(rsvp.kidName);
-  const className = normalizeRowKeyPart(rsvp.className);
 
-  return `${kidName}-${className}-${timestamp}`;
+  return `${kidName}-${timestamp}`;
 }
 
 function validateRsvp(body: RsvpRequestBody): {
@@ -74,17 +111,12 @@ function validateRsvp(body: RsvpRequestBody): {
 } {
   const errors: string[] = [];
   const kidName = isString(body.kidName) ? body.kidName.trim() : "";
-  const className = isString(body.className) ? body.className.trim() : "";
   const parentName = isString(body.parentName) ? body.parentName.trim() : "";
   const attending = isString(body.attending) ? body.attending.trim() : "";
   const guestCount = isString(body.guestCount) ? body.guestCount.trim() : "";
 
   if (!kidName) {
     errors.push("Kid name is required.");
-  }
-
-  if (!className) {
-    errors.push("Class is required.");
   }
 
   if (attending !== "Yes" && attending !== "No") {
@@ -107,7 +139,6 @@ function validateRsvp(body: RsvpRequestBody): {
     errors,
     value: {
       attending: attending as Attendance,
-      className,
       guestCount: attending === "Yes" ? guestCount : "",
       isUpdate: body.isUpdate as boolean,
       kidName,
@@ -168,7 +199,7 @@ export async function rsvp(
     });
   }
 
-  const submittedAt = new Date().toISOString();
+  const submittedAt = getEasternTimestamp();
   const entity: RsvpEntity = {
     ...validation.value,
     partitionKey,
