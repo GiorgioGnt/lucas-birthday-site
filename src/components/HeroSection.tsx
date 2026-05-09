@@ -57,18 +57,34 @@ function PixelPowerUp({ className = '' }: { className?: string }) {
 
 function PixelHeroCharacter() {
   return (
-    <div className="relative h-full w-full">
-      <div className="absolute left-[30%] top-0 h-[28%] w-[40%] bg-cyan-200 shadow-[0_3px_0_#0e7490]" />
-      <div className="absolute left-[20%] top-[24%] h-[36%] w-[60%] bg-sky-500 shadow-[inset_0_-5px_0_#0369a1,3px_3px_0_#050816]" />
-      <div className="absolute left-[10%] top-[34%] h-[18%] w-[18%] bg-amber-100" />
-      <div className="absolute right-[10%] top-[34%] h-[18%] w-[18%] bg-amber-100" />
-      <div className="absolute left-[30%] top-[38%] h-[12%] w-[10%] bg-[#050816]" />
-      <div className="absolute right-[30%] top-[38%] h-[12%] w-[10%] bg-[#050816]" />
-      <div className="absolute left-[20%] bottom-[14%] h-[26%] w-[26%] bg-red-500 shadow-[0_4px_0_#7f1d1d]" />
-      <div className="absolute right-[20%] bottom-[14%] h-[26%] w-[26%] bg-red-500 shadow-[0_4px_0_#7f1d1d]" />
-      <div className="absolute left-[14%] bottom-0 h-[16%] w-[28%] bg-amber-300" />
-      <div className="absolute right-[14%] bottom-0 h-[16%] w-[28%] bg-amber-300" />
-    </div>
+    <svg
+      aria-hidden="true"
+      className="h-full w-full drop-shadow-[4px_4px_0_#050816]"
+      shapeRendering="crispEdges"
+      viewBox="0 0 96 72"
+    >
+      <path
+        d="M8 36H24V28H36V20H56V28H64V12H88V20H96V40H88V48H72V56H64V64H56V56H40V64H32V56H20V48H8Z"
+        fill="#84cc16"
+      />
+      <path
+        d="M8 36H24V28H36V20H56V28H64V36H56V32H36V40H20V48H8Z"
+        fill="#a3e635"
+      />
+      <path
+        d="M72 12H88V20H96V32H72Z"
+        fill="#bef264"
+      />
+      <path d="M88 32H96V40H88Z" fill="#d9f99d" />
+      <path d="M32 20H40V12H48V20H56V12H64V28H32Z" fill="#4d7c0f" />
+      <path d="M72 24H80V32H72Z" fill="#050816" />
+      <path d="M32 48H64V56H32Z" fill="#d9f99d" />
+      <path d="M32 64H48V72H32ZM56 64H72V72H56Z" fill="#fbbf24" />
+      <path
+        d="M8 48H20V56H32V64H40V72H32V64H20V56H8ZM88 40H96V48H88Z"
+        fill="#65a30d"
+      />
+    </svg>
   )
 }
 
@@ -108,10 +124,10 @@ function PixelEnemy({ defeated }: { defeated: boolean }) {
     <motion.div
       animate={
         defeated
-          ? { rotate: 180, scaleY: 0.45, y: 16, opacity: 0.7 }
+          ? { rotate: 180, scaleY: 1, y: 16, opacity: 1 }
           : { rotate: 0, scaleY: 1, y: 0, opacity: 1 }
       }
-      className="absolute bottom-[14%] left-[36%] h-[clamp(1.6rem,8vw,3rem)] w-[clamp(2rem,10vw,3.8rem)] origin-center"
+      className="absolute bottom-[14%] left-[40%] h-[clamp(1.15rem,6.2vw,2.25rem)] w-[clamp(2rem,10vw,3.8rem)] origin-center"
       transition={{ duration: 0.22, ease: 'easeOut' }}
     >
       <div className="relative h-full w-full rounded-t-full border-4 border-[#7f1d1d] bg-fuchsia-500 shadow-[inset_0_-7px_0_#be185d,4px_4px_0_#050816]">
@@ -153,8 +169,8 @@ function ArcadeIntroAnimation({
     async function runIntro() {
       const ground = '0%'
       const oneUp = '-42%'
-      const twoUp = '-84%'
-      const shortHop = '-64%'
+      const twoUp = '-96%'
+      const shortHop = '-78%'
 
       const step = {
         duration: 0.22,
@@ -183,7 +199,7 @@ function ArcadeIntroAnimation({
       setMonsterDefeated(true)
 
       await characterControls.start({
-        left: '68%',
+        left: '62%',
         y: ground,
         transition: { duration: 0.55, ease: 'linear' },
       })
@@ -223,7 +239,7 @@ function ArcadeIntroAnimation({
 
       <motion.div
         animate={characterControls}
-        className="absolute bottom-[16%] left-[16%] z-10 h-[clamp(2.5rem,10vw,4.5rem)] w-[clamp(2rem,8vw,3.6rem)]"
+        className="absolute bottom-[16%] left-[16%] z-10 h-[clamp(2.4rem,10vw,4.3rem)] w-[clamp(3.2rem,13vw,5.8rem)]"
       >
         <PixelHeroCharacter />
       </motion.div>
