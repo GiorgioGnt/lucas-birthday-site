@@ -2,7 +2,7 @@ import type { FormEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
 type AttendanceOption = '' | 'Yes' | 'No'
-type GuestCountOption = '' | '1' | '2' | '3' | '4' | '5' | '6+'
+type GuestCountOption = '' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10'
 
 type RSVPForm = {
   attending: AttendanceOption
@@ -20,12 +20,15 @@ type CleanedRSVPPayload = {
 }
 
 const guestCountOptions: Exclude<GuestCountOption, ''>[] = [
-  '1',
   '2',
   '3',
   '4',
   '5',
-  '6+',
+  '6',
+  '7',
+  '8',
+  '9',
+  '10',
 ]
 
 // localhost is only for local development; /api/rsvp uses Azure Static Web Apps integrated API routing in production.
