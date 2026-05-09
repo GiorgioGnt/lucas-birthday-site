@@ -127,7 +127,7 @@ function PixelEnemy({ defeated }: { defeated: boolean }) {
           ? { rotate: 180, scaleY: 1, y: 8, opacity: 1 }
           : { rotate: 0, scaleY: 1, y: 0, opacity: 1 }
       }
-      className="absolute bottom-[clamp(1.25rem,4vw,1.65rem)] left-[40%] z-30 h-[clamp(1.15rem,6.2vw,2.25rem)] w-[clamp(2rem,10vw,3.8rem)] origin-center transform-gpu [backface-visibility:hidden] [will-change:transform]"
+      className="absolute bottom-[clamp(1.55rem,5vw,1.9rem)] left-[40%] z-30 h-[clamp(1.15rem,6.2vw,2.25rem)] w-[clamp(2rem,10vw,3.8rem)] origin-center transform-gpu [backface-visibility:hidden] [will-change:transform] sm:bottom-[clamp(1.25rem,4vw,1.65rem)]"
       transition={{ duration: 0.22, ease: 'easeOut' }}
     >
       <div className="relative h-full w-full rounded-t-full border-4 border-[#7f1d1d] bg-fuchsia-500 shadow-[inset_0_-7px_0_#be185d,4px_4px_0_#050816]">
@@ -168,10 +168,16 @@ function ArcadeIntroAnimation({
 
     async function runIntro() {
       // Whole-pixel transforms avoid mobile Safari compositing gaps around pixel art.
+      // Mobile gets a lower block-hit hop so the dino stays aligned under the block.
+      const isMobileViewport = window.matchMedia('(max-width: 639px)').matches
       const ground = 0
       const oneUp = -30
       const twoUp = -68
-      const shortHop = -56
+      const desktopBlockJumpHeight = -56
+      const mobileBlockJumpHeight = -44
+      const shortHop = isMobileViewport
+        ? mobileBlockJumpHeight
+        : desktopBlockJumpHeight
 
       const step = {
         duration: 0.22,
