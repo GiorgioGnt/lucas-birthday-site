@@ -127,7 +127,7 @@ function PixelEnemy({ defeated }: { defeated: boolean }) {
           ? { rotate: 180, scaleY: 1, y: 16, opacity: 1 }
           : { rotate: 0, scaleY: 1, y: 0, opacity: 1 }
       }
-      className="absolute bottom-[14%] left-[40%] h-[clamp(1.15rem,6.2vw,2.25rem)] w-[clamp(2rem,10vw,3.8rem)] origin-center"
+      className="absolute bottom-[clamp(1.25rem,4vw,1.65rem)] left-[40%] h-[clamp(1.15rem,6.2vw,2.25rem)] w-[clamp(2rem,10vw,3.8rem)] origin-center"
       transition={{ duration: 0.22, ease: 'easeOut' }}
     >
       <div className="relative h-full w-full rounded-t-full border-4 border-[#7f1d1d] bg-fuchsia-500 shadow-[inset_0_-7px_0_#be185d,4px_4px_0_#050816]">
@@ -234,12 +234,12 @@ function ArcadeIntroAnimation({
       {/* The block sits around the same horizontal position as the hidden 5. */}
       <AnimatedQuestionBlock hit={blockHit} />
       <PixelEnemy defeated={monsterDefeated} />
-      <PixelPowerUp className="bottom-[11%] left-[3%] scale-[.78] sm:scale-90" />
-      <PixelPipe className="bottom-[16%] right-[3%] scale-[.48] origin-bottom-right sm:scale-[.62]" />
+      <PixelPowerUp className="bottom-[clamp(1.15rem,3.8vw,1.55rem)] left-[3%] scale-[.78] sm:scale-90" />
+      <PixelPipe className="bottom-[clamp(1.25rem,4vw,1.65rem)] right-[3%] scale-[.48] origin-bottom-right sm:scale-[.62]" />
 
       <motion.div
         animate={characterControls}
-        className="absolute bottom-[16%] left-[16%] z-10 h-[clamp(2.4rem,10vw,4.3rem)] w-[clamp(3.2rem,13vw,5.8rem)]"
+        className="absolute bottom-[clamp(1.25rem,4vw,1.65rem)] left-[16%] z-10 h-[clamp(2.4rem,10vw,4.3rem)] w-[clamp(3.2rem,13vw,5.8rem)]"
       >
         <PixelHeroCharacter />
       </motion.div>
