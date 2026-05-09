@@ -56,21 +56,21 @@ function PixelPowerUp({ className = '' }: { className?: string }) {
 }
 
 function PixelHeroCharacter() {
+  const dinoShape =
+    'M8 36H24V28H36V20H56V28H64V12H88V20H96V40H88V48H72V56H64V64H56V56H40V64H32V56H20V48H8Z'
+  const dinoHighlight =
+    'M8 36H24V28H36V20H56V28H64V36H56V32H36V40H20V48H8Z'
+
   return (
     <svg
       aria-hidden="true"
-      className="h-full w-full drop-shadow-[4px_4px_0_#050816]"
+      className="h-full w-full"
       shapeRendering="crispEdges"
       viewBox="0 0 96 72"
     >
-      <path
-        d="M8 36H24V28H36V20H56V28H64V12H88V20H96V40H88V48H72V56H64V64H56V56H40V64H32V56H20V48H8Z"
-        fill="#84cc16"
-      />
-      <path
-        d="M8 36H24V28H36V20H56V28H64V36H56V32H36V40H20V48H8Z"
-        fill="#a3e635"
-      />
+      <path d={dinoShape} fill="#050816" transform="translate(4 4)" />
+      <path d={dinoShape} fill="#84cc16" />
+      <path d={dinoHighlight} fill="#a3e635" />
       <path
         d="M72 12H88V20H96V32H72Z"
         fill="#bef264"
@@ -111,7 +111,7 @@ function CountdownBanner() {
   return (
     <motion.p
       animate={{ opacity: [1, 0.22, 1] }}
-      className="pointer-events-none absolute inset-x-[18%] bottom-[36%] z-20 text-center font-display text-[clamp(.64rem,3vw,1.2rem)] font-black uppercase tracking-[.14em] text-white drop-shadow-[3px_3px_0_#050816]"
+      className="pointer-events-none absolute inset-x-[18%] bottom-[36%] z-50 text-center font-display text-[clamp(.64rem,3vw,1.2rem)] font-black uppercase tracking-[.14em] text-white drop-shadow-[3px_3px_0_#050816]"
       transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
     >
       Press start in {daysUntilParty} days
@@ -124,10 +124,10 @@ function PixelEnemy({ defeated }: { defeated: boolean }) {
     <motion.div
       animate={
         defeated
-          ? { rotate: 180, scaleY: 1, y: 16, opacity: 1 }
+          ? { rotate: 180, scaleY: 1, y: 8, opacity: 1 }
           : { rotate: 0, scaleY: 1, y: 0, opacity: 1 }
       }
-      className="absolute bottom-[clamp(1.25rem,4vw,1.65rem)] left-[40%] h-[clamp(1.15rem,6.2vw,2.25rem)] w-[clamp(2rem,10vw,3.8rem)] origin-center"
+      className="absolute bottom-[clamp(1.25rem,4vw,1.65rem)] left-[40%] z-30 h-[clamp(1.15rem,6.2vw,2.25rem)] w-[clamp(2rem,10vw,3.8rem)] origin-center transform-gpu [backface-visibility:hidden] [will-change:transform]"
       transition={{ duration: 0.22, ease: 'easeOut' }}
     >
       <div className="relative h-full w-full rounded-t-full border-4 border-[#7f1d1d] bg-fuchsia-500 shadow-[inset_0_-7px_0_#be185d,4px_4px_0_#050816]">
@@ -144,7 +144,7 @@ function AnimatedQuestionBlock({ hit }: { hit: boolean }) {
   return (
     <motion.div
       animate={hit ? { y: [0, -14, 0] } : { y: 0 }}
-      className="absolute left-[70%] top-[6%] h-[clamp(2.2rem,9vw,3.7rem)] w-[clamp(2.2rem,9vw,3.7rem)] -translate-x-1/2 border-4 border-[#7c2d12] bg-amber-400 shadow-[inset_0_-8px_0_#f97316,5px_5px_0_#050816]"
+      className="absolute left-[70%] top-[6%] z-40 h-[clamp(2.2rem,9vw,3.7rem)] w-[clamp(2.2rem,9vw,3.7rem)] -translate-x-1/2 transform-gpu border-4 border-[#7c2d12] bg-amber-400 shadow-[inset_0_-8px_0_#f97316,5px_5px_0_#050816] [backface-visibility:hidden] [will-change:transform]"
       transition={{ duration: 0.28, ease: 'easeOut' }}
     >
       <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-display text-[clamp(1.3rem,5vw,2.3rem)] font-black text-yellow-900">
@@ -167,10 +167,11 @@ function ArcadeIntroAnimation({
     let isMounted = true
 
     async function runIntro() {
-      const ground = '0%'
-      const oneUp = '-42%'
-      const twoUp = '-96%'
-      const shortHop = '-78%'
+      // Whole-pixel transforms avoid mobile Safari compositing gaps around pixel art.
+      const ground = 0
+      const oneUp = -30
+      const twoUp = -68
+      const shortHop = -56
 
       const step = {
         duration: 0.22,
@@ -229,23 +230,23 @@ function ArcadeIntroAnimation({
   }, [characterControls, onBlockHit])
 
   return (
-    <div className="relative mx-auto mt-5 h-[clamp(6rem,27vw,11rem)] w-full max-w-3xl overflow-hidden">
+    <div className="relative isolate mx-auto mt-5 h-[clamp(7rem,30vw,12rem)] w-full max-w-3xl overflow-visible">
       {blockHit && <CountdownBanner />}
       {/* The block sits around the same horizontal position as the hidden 5. */}
       <AnimatedQuestionBlock hit={blockHit} />
       <PixelEnemy defeated={monsterDefeated} />
-      <PixelPowerUp className="bottom-[clamp(1.15rem,3.8vw,1.55rem)] left-[3%] scale-[.78] sm:scale-90" />
-      <PixelPipe className="bottom-[clamp(1.25rem,4vw,1.65rem)] right-[3%] scale-[.48] origin-bottom-right sm:scale-[.62]" />
+      <PixelPowerUp className="bottom-[clamp(1.15rem,3.8vw,1.55rem)] left-[3%] z-20 scale-[.78] sm:scale-90" />
+      <PixelPipe className="bottom-[clamp(1.25rem,4vw,1.65rem)] right-[3%] z-20 scale-[.48] origin-bottom-right sm:scale-[.62]" />
 
       <motion.div
         animate={characterControls}
-        className="absolute bottom-[clamp(1.25rem,4vw,1.65rem)] left-[16%] z-10 h-[clamp(2.4rem,10vw,4.3rem)] w-[clamp(3.2rem,13vw,5.8rem)]"
+        className="absolute bottom-[clamp(1.25rem,4vw,1.65rem)] left-[16%] z-30 h-[clamp(2.4rem,10vw,4.3rem)] w-[clamp(3.2rem,13vw,5.8rem)] transform-gpu [backface-visibility:hidden] [will-change:transform]"
       >
         <PixelHeroCharacter />
       </motion.div>
 
-      <div className="absolute inset-x-4 bottom-2 h-4 border-2 border-[#14532d] bg-lime-400 shadow-[inset_0_-5px_0_#15803d]" />
-      <div className="absolute inset-x-4 bottom-0 h-3 bg-[linear-gradient(45deg,#f97316_25%,#ef4444_25%,#ef4444_50%,#f97316_50%,#f97316_75%,#ef4444_75%)] bg-[size:22px_22px]" />
+      <div className="absolute inset-x-4 bottom-2 z-10 h-4 border-2 border-[#14532d] bg-lime-400 shadow-[inset_0_-5px_0_#15803d]" />
+      <div className="absolute inset-x-4 bottom-0 z-10 h-3 bg-[linear-gradient(45deg,#f97316_25%,#ef4444_25%,#ef4444_50%,#f97316_50%,#f97316_75%,#ef4444_75%)] bg-[size:22px_22px]" />
     </div>
   )
 }
